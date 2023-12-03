@@ -21,10 +21,44 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: ThreadWatcherDelegate {
     func hangoutOccurred(_: ThreadWatcher,
-                         current stackTrace: String,
                          withDuration duration: TimeInterval)
     {
-        print("hangoutOccurred: \(duration)")
-        print("\(stackTrace)")
+        DispatchQueue.main.async {
+            let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .medium)
+            let message = "Hangout Occurred: \(timestamp) - Duration: \(duration)\n\(self.getDebugInfo())"
+            print(message)
+        }
+    }
+
+    private func getDebugInfo() -> String {
+        var debugInfo = ""
+        if let currentViewController = UIApplication.getTopViewcontroller() {
+            debugInfo += "Current ViewController: \(String(describing: currentViewController))\n"
+        }
+        let stackTrace = Thread.callStackSymbols.joined(separator: "\n")
+        debugInfo += "Stack Trace:\n\(stackTrace)"
+        return debugInfo
+    }
+}
+
+extension UIApplication {
+    class func getTopViewcontroller(
+        controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController
+    ) -> UIViewController? {
+        if let navigationController = controller as? UINavigationController {
+            return getTopViewcontroller(controller: navigationController.visibleViewController)
+        }
+
+        if let tabController = controller as? UITabBarController {
+            if let selected = tabController.selectedViewController {
+                return getTopViewcontroller(controller: selected)
+            }
+        }
+
+        if let presented = controller?.presentedViewController {
+            return getTopViewcontroller(controller: presented)
+        }
+
+        return controller
     }
 }
