@@ -1,0 +1,7 @@
+opt_in_rules:
+    - indentation_width
+    - explicit_self
+    - operator_usage_whitespace
+    
+disabled_rules:
+    - opening_brace
