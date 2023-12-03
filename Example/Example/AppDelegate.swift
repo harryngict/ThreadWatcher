@@ -21,10 +21,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: ThreadWatcherDelegate {
     func hangoutOccurred(_: ThreadWatcher,
-                         current stackTrace: String,
                          withDuration duration: TimeInterval)
     {
         print("hangoutOccurred: \(duration)")
-        print("\(stackTrace)")
     }
 }
